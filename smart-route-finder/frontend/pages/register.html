@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NaviPulse Sign Up</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    background:#050505;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow-y:auto;
+    overflow-x:hidden;
+    position:relative;
+    padding:30px 0;
+}
+
+/* HIGH-TECH GLOBAL GLOBAL VECTOR GRID BACKGROUND */
+.bg-glow{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+    background: 
+        linear-gradient(rgba(255, 106, 0, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 106, 0, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Explicit Telemetry Map Outline Elements */
+.bg-world-map {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.12;
+    pointer-events: none;
+    background-image: url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80");
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: overlay;
+    filter: brightness(0.4) saturate(0.5);
+}
+
+.glow{
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:#ff6a00;
+    border-radius:50%;
+    filter:blur(140px);
+    opacity:.25;
+    animation:float 8s infinite alternate;
+}
+
+.g1{ top:-100px; left:-100px; }
+.g2{ right:-120px; bottom:-100px; }
+.g3{ left:45%; top:45%; width:220px; height:220px; }
+
+@keyframes float{
+    from{ transform:translateY(0); }
+    to{ transform:translateY(45px); }
+}
+
+.route-line{
+    position:absolute;
+    width:120%;
+    height:2px;
+    background:linear-gradient(90deg,transparent,#ff6a00,transparent);
+    opacity:.15;
+    animation:moveRoad 6s linear infinite;
+}
+
+.r1{ top:20%; transform:rotate(-8deg); }
+.r2{ top:55%; transform:rotate(7deg); }
+.r3{ top:78%; transform:rotate(-5deg); }
+
+@keyframes moveRoad{
+    from{ margin-left:-200px; }
+    to{ margin-left:200px; }
+}
+
+/* MAIN CONTAINER BOX */
+.main-box{
+    width:1100px;
+    min-height:650px;
+    background:rgba(10,10,10,.82);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:30px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    overflow:hidden;
+    box-shadow:0 0 50px rgba(255,106,0,.2);
+    backdrop-filter:blur(20px);
+    margin:20px;
+    z-index: 1;
+}
+
+/* LEFT SIDE - INTERACTIVE MATRIX NETWORK PANEL */
+.info-box{
+    padding:60px;
+    background: linear-gradient(135deg, rgba(4,4,8,0.85) 0%, rgba(12,6,4,0.95) 100%);
+    position:relative;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* CYBERSPACE INTERACTIVE NETWORK CANVAS */
+#cyber-matrix-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.info-content {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.logo{
+    font-size:48px;
+    font-weight:700;
+}
+
+.logo .navi{ color:white; }
+.logo .pulse{ color:#ff6a00; text-shadow: 0 0 15px rgba(255,106,0,0.4); }
+
+.tagline{
+    color:#bbb;
+    margin-top:10px;
+    font-size:14px;
+    letter-spacing: 1px;
+}
+
+.info-box h1{
+    margin-top:70px;
+    font-size:50px;
+    line-height:1.2;
+    font-weight: 800;
+}
+
+.info-box h1 span{
+    color:#ff6a00;
+    background: linear-gradient(90deg, #ff6a00, #ffa200);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.info-box p{
+    color:#d0d0d0;
+    margin-top:20px;
+    line-height:1.9;
+    font-size:15px;
+}
+
+.features{
+    margin-top:40px;
+}
+
+.feature{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:25px;
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateX(8px);
+}
+
+.feature i{
+    width:55px;
+    height:55px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:rgba(255,106,0,.12);
+    color:#ff6a00;
+    border:1px solid rgba(255,106,0,0.3);
+    border-radius:15px;
+    font-size:20px;
+    transition: all 0.3s;
+}
+
+.feature:hover i {
+    background:rgba(255,106,0,0.25);
+    box-shadow: 0 0 15px rgba(255,106,0,0.4);
+    border-color: #ff6a00;
+}
+
+.feature h3{ font-size:17px; font-weight: 600; }
+.feature small{ color:#aaa; }
+
+/* RIGHT SIDE FORM BOX */
+.form-box{
+    padding:55px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#080808;
+    position: relative;
+    z-index: 5;
+}
+
+.form-container{ width:100%; }
+.form-container h2{ font-size:38px; margin-bottom:10px; font-weight: 700; }
+.form-container p{ color:#aaa; margin-bottom:45px; }
+
+/* INTERACTIVE WAVY INPUT GROUPS */
+.input-box {
+    position: relative;
+    margin-bottom: 38px;
+    width: 100%;
+}
+
+.input-field {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border-bottom: 2px solid #242424;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.input-field i {
+    width: 35px;
+    text-align: left;
+    color: #ff6a00;
+    font-size: 18px;
+    z-index: 2;
+    padding-bottom: 10px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 10px 0px 10px 5px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    z-index: 2;
+}
+
+.input-field:focus-within {
+    border-bottom-color: #ff6a00;
+}
+
+.input-box label {
+    position: absolute;
+    top: 10px;
+    left: 40px; 
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-box label span {
+    display: inline-block;
+    font-size: 16px;
+    min-width: 5px;
+    color: #666;
+    font-weight: 500;
+    transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.input-field input:focus + label span,
+.input-field input:valid + label span {
+    color: #ff6a00;
+    transform: translateY(-26px);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* BRUTALIST SLIDE BUTTON */
+.btn{
+    width:100%;
+    padding:18px;
+    border: 2px solid #ff6a00;
+    border-radius: 6px;
+    background: transparent;
+    color: #ff6a00;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    transition: all 250ms ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow: 4px 4px 0px #ff6a00;
+    margin-top: 10px;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: #ff6a00;
+    z-index: -1;
+    box-shadow: 4px 8px 19px -3px rgba(255, 106, 0, 0.2);
+    transition: all 250ms ease;
+}
+
+.btn:hover{ color: #050505; }
+.btn:hover::before { width: 100%; }
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #ff6a00; }
+
+.bottom-link{ margin-top:28px; text-align:center; color:#aaa; }
+.bottom-link a{ color:#ff6a00; text-decoration:none; }
+
+/* RESPONSIVE */
+@media(max-width:950px){
+    body{ align-items:flex-start; }
+    .main-box{ width:92%; grid-template-columns:1fr; }
+    .info-box{ padding:40px; }
+    .info-box h1{ margin-top:40px; font-size:38px; }
+    .form-box{ padding:40px; }
+}
+
+@media(max-width:600px){
+    .info-box, .form-box{ padding:25px; }
+    .logo{ font-size:38px; }
+    .info-box h1{ font-size:30px; }
+}
+
+.message {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 14px;
+    text-align: center;
+}
+
+.message.success { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; display: block; }
+.message.error { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; display: block; }
+</style>
+</head>
+<body>
+
+<div class="bg-glow">
+    <div class="bg-world-map"></div> 
+    <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+    <div class="route-line r1"></div><div class="route-line r2"></div><div class="route-line r3"></div>
+</div>
+
+<div class="main-box">
+
+    <div class="info-box" id="interactivePanel">
+        
+        <canvas id="cyber-matrix-canvas"></canvas>
+
+        <div class="info-content">
+            <div class="logo"><span style="color:white">Navi</span><span class="pulse">Pulse</span></div>
+            <div class="tagline">Smart Routes. Faster Journeys.</div>
+            
+            <h1>Create Account<br><span>Start Smart Travel</span></h1>
+            <p>Register to save searched routes, favorite destinations, traffic history, and fastest travel suggestions.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <div>
+                        <h3>Route History</h3>
+                        <small>Save route distance and travel time</small>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <div>
+                        <h3>Saved Routes</h3>
+                        <small>Store favorite smart routes</small>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div>
+                        <h3>Fastest Route</h3>
+                        <small>A* Algorithm optimized routes</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-box">
+        <div class="form-container">
+            <h2>Create Account</h2>
+            <p>Join NaviPulse and explore smarter navigation.</p>
+            <div id="authMessage" class="message"></div>
+            
+            <form id="registerForm">
+                
+                <div class="input-box">
+                    <div class="input-field">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="username" required autocomplete="off">
+                        <label class="wave-label">Username</label>
+                    </div>
+                </div>
+
+                <div class="input-box">
+                    <div class="input-field">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" required autocomplete="off">
+                        <label class="wave-label">Email Address</label>
+                    </div>
+                </div>
+
+                <div class="input-box">
+                    <div class="input-field">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" required autocomplete="off">
+                        <label class="wave-label">Password</label>
+                    </div>
+                </div>
+
+                <div class="input-box">
+                    <div class="input-field">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <input type="password" id="confirmPassword" required autocomplete="off">
+                        <label class="wave-label">Confirm Password</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Create Account</button>
+                <div class="bottom-link">Already have an account? <a href="login.html">Login</a></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+
+    <script>
+        document.querySelectorAll('.wave-label').forEach(label => {
+            label.innerHTML = label.innerText
+                .split('')
+                .map((letter, idx) => `<span style="transition-delay:${idx * 40}ms">${letter === ' ' ? '&nbsp;' : letter}</span>`)
+                .join('');
+        });
+    </script>
+
+    <script>
+        const canvas = document.getElementById('cyber-matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        const panel = document.getElementById('interactivePanel');
+
+        let width = canvas.width = panel.clientWidth;
+        let height = canvas.height = panel.clientHeight;
+
+        const particles = [];
+        const particleCount = 45;
+        let mouse = { x: null, y: null, radius: 110 };
+
+        panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+
+        panel.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = panel.clientWidth;
+            height = canvas.height = panel.clientHeight;
+        });
+
+        class MatrixNode {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = (Math.random() - 0.5) * 0.8;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= dx * force * 0.03;
+                        this.y -= dy * force * 0.03;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 106, 0, 0.45)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new MatrixNode());
+        }
+
+        function renderMatrix() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 90) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(255, 106, 0, ${0.18 * (1 - dist / 90)})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(renderMatrix);
+        }
+        renderMatrix();
+    </script>
+</body>
+</html>

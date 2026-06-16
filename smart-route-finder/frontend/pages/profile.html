@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NaviPulse</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #050505; color: white; }
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #080808; border-right: 1px solid #222; padding: 25px 15px; flex-shrink: 0; }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .logo span:first-child { color: white; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #ccc; font-size: 14px; margin-bottom: 30px; }
+        .menu a { display: flex; align-items: center; gap: 15px; padding: 15px; margin: 8px 0; color: white; text-decoration: none; border-radius: 12px; transition: 0.3s; }
+        .menu a:hover, .menu .active { background: #ff6a00; }
+        .premium { margin-top: 60px; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #111; }
+        .premium h3 { color: #ff9500; margin-bottom: 10px; }
+        .premium p { color: #bbb; font-size: 14px; line-height: 1.5; }
+        .premium button { width: 100%; padding: 12px; background: #ff6a00; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+        .main { flex: 1; padding: 25px; min-width: 0; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .icons i { margin-left: 20px; font-size: 20px; cursor: pointer; }
+        .welcome h1 { font-size: 28px; }
+        .welcome p { color: #aaa; margin-top: 5px; }
+
+        .profile-grid { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 24px; margin-top: 22px; }
+        .profile-panel {
+            background: #ff6a00;
+            border-radius: 18px;
+            padding: 30px 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(255, 106, 0, 0.18);
+        }
+        .has-slide-bar { position: relative; overflow: hidden; }
+        .has-slide-bar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 3px;
+            background: #ff6a00;
+            transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 2;
+        }
+        .has-slide-bar:hover::before { left: 0; }
+        .profile-panel::before { background: #fff; }
+        .edit-badge {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            border: 1px solid rgba(255,255,255,0.28);
+            background: rgba(255,255,255,0.18);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .avatar-holder {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px auto 18px;
+            font-size: 42px;
+        }
+        .identity-text { text-align: center; margin-bottom: 24px; }
+        .identity-text h2 { font-size: 23px; margin-bottom: 5px; }
+        .identity-text p { color: rgba(255,255,255,0.82); font-size: 13px; }
+        .line-break { height: 1px; background: rgba(255,255,255,0.22); margin: 20px 0; }
+        .info-stack { display: flex; flex-direction: column; gap: 15px; font-size: 14px; }
+        .info-row { display: flex; align-items: center; gap: 12px; line-height: 1.4; }
+        .info-row i { width: 20px; text-align: center; opacity: 0.9; }
+        .sub-rows { display: flex; flex-direction: column; gap: 7px; padding-left: 32px; color: rgba(255,255,255,0.82); font-size: 13px; }
+
+        .workspace-right { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+        .top-stats-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+        .card {
+            background: #0c0c0c;
+            border: 1px solid #2a2a2a;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 0 20px rgba(255, 106, 0, 0.05);
+        }
+        .card:hover { border-color: #444; }
+        .card-header { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-bottom: 18px; }
+        .card-header h3 { font-size: 16px; }
+        .stat-value { color: #ff6a00; font-size: 28px; font-weight: 800; line-height: 1; }
+        .meta { color: #aaa; font-size: 13px; line-height: 1.5; }
+        .chart-layout-box { display: flex; align-items: center; gap: 18px; }
+        .ring-chart {
+            width: 84px;
+            height: 84px;
+            flex: 0 0 84px;
+            border-radius: 50%;
+            background: conic-gradient(#ff6a00 0% 45%, #ff9500 45% 72%, #36d636 72% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ring-chart::after {
+            content: "42\A trips";
+            white-space: pre-line;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #0c0c0c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .legend-list { display: grid; gap: 9px; font-size: 13px; min-width: 0; }
+        .legend-tag { display: flex; align-items: center; gap: 7px; color: #aaa; }
+        .legend-tag strong { color: white; }
+        .colored-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 8px; }
+
+        .sub-nav-tabs { display: flex; gap: 4px; border-bottom: 1px solid #2a2a2a; margin: -22px -22px 20px; padding: 0 22px; background: rgba(255,255,255,0.02); overflow-x: auto; }
+        .tab-item { color: #888; padding: 17px 18px; text-decoration: none; font-size: 14px; font-weight: 700; position: relative; border: 0; background: transparent; cursor: pointer; }
+        .tab-item.active { color: #ff6a00; }
+        .tab-item.active::after { content: ""; position: absolute; left: 0; bottom: -1px; width: 100%; height: 2px; background: #ff6a00; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .action-belt { display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 18px; }
+        .list-container { display: flex; flex-direction: column; gap: 10px; }
+        .record-row {
+            display: grid;
+            grid-template-columns: 120px 105px 90px minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            background: #111;
+            border: 1px solid #222;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        .record-row:hover { border-color: #ff6a00; }
+        .badge-status { font-weight: 800; }
+        .badge-status.assigned { color: #ff6a00; }
+        .badge-status.done { color: #36d636; }
+        .badge-status.canceled { color: #ff6b61; }
+        .route-path { color: #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+        .form-grid h3 { grid-column: 1 / -1; font-size: 16px; margin-top: 2px; }
+        .form-group { display: flex; flex-direction: column; gap: 7px; }
+        label { color: #aaa; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0; }
+        input, select {
+            width: 100%;
+            background: #141414;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 10px;
+            padding: 11px 12px;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #ff6a00; }
+        .check-row { display: flex; align-items: center; gap: 10px; color: #ddd; text-transform: none; font-size: 14px; font-weight: 600; }
+        .check-row input { width: auto; accent-color: #ff6a00; }
+        .btn {
+            background: #ff6a00;
+            color: #fff;
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        .btn:hover { background: #ff8533; }
+        .profile-message { display: none; margin-bottom: 14px; padding: 11px 13px; border-radius: 10px; font-size: 13px; }
+        .profile-message.ok { background: rgba(54,214,54,0.12); border: 1px solid rgba(54,214,54,0.4); color: #36d636; }
+        .profile-message.error { background: rgba(255,43,31,0.12); border: 1px solid rgba(255,43,31,0.4); color: #ff6b61; }
+
+        .theme-light body { background: #f4f6fb; color: #111827; }
+        .theme-light .sidebar { background: #ffffff; border-right-color: #d1d5db; }
+        .theme-light .tagline, .theme-light .welcome p, .theme-light .meta, .theme-light label { color: #4b5563 !important; }
+        .theme-light .menu a { color: #111827; }
+        .theme-light .card, .theme-light .premium { background: #ffffff !important; border-color: #d1d5db !important; color: #111827 !important; box-shadow: none !important; }
+        .theme-light input, .theme-light select, .theme-light .record-row { background: #f9fafb !important; color: #111827 !important; border-color: #d1d5db !important; }
+        .theme-light .route-path, .theme-light .legend-tag strong { color: #111827; }
+        .theme-light .ring-chart::after { background: #ffffff; }
+        .theme-light .sub-nav-tabs { border-bottom-color: #d1d5db; background: #f9fafb; }
+
+        @media (max-width: 1180px) {
+            .top-stats-row { grid-template-columns: 1fr; }
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { padding: 18px; }
+            .form-grid, .record-row { grid-template-columns: 1fr; }
+            .action-belt { align-items: stretch; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Smart Routes. Smarter Journeys.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="history.html#saved-routes"><i class="fa-solid fa-bookmark"></i> Saved Routes</a>
+                <a href="traffic.html"><i class="fa-solid fa-car"></i> Traffic Updates</a>
+                <a href="profile.html" class="active"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <div class="premium">
+                <h3><i class="fa-solid fa-crown"></i> Go Premium</h3>
+                <p>Unlock advanced smart route features.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <i class="fa-solid fa-bars"></i>
+                <div class="icons">
+                    <i class="fa-solid fa-moon"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <a href="profile.html" style="color:inherit"><i class="fa-solid fa-user-circle"></i></a>
+                </div>
+            </div>
+
+            <div class="welcome">
+                <h1 id="welcomeUser">Profile</h1>
+                <p>Manage your identity, route preferences, and trip workspace.</p>
+            </div>
+
+            <div class="profile-grid">
+                <aside class="profile-panel has-slide-bar">
+                    <button class="edit-badge" type="button" onclick="document.getElementById('username').focus()"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <div class="avatar-holder"><i class="fa-solid fa-user"></i></div>
+                    <div class="identity-text">
+                        <h2 id="profileName">User</h2>
+                        <p id="profileEmail">email@example.com</p>
+                    </div>
+                    <div class="line-break"></div>
+                    <div class="info-stack">
+                        <div class="info-row"><i class="fa-solid fa-location-dot"></i><span id="homeAddressText">Home base not set</span></div>
+                        <div class="info-row"><i class="fa-solid fa-building"></i><span id="workAddressText">Work zone not set</span></div>
+                        <div class="info-row"><i class="fa-solid fa-phone"></i><span id="phoneText">Phone not set</span></div>
+                        <div class="sub-rows">
+                            <div id="memberText">NaviPulse member</div>
+                            <div id="modeText">Default mode: Driving</div>
+                        </div>
+                        <div class="line-break"></div>
+                        <div class="info-row"><i class="fa-solid fa-route"></i><span>Smart route profile enabled</span></div>
+                        <div class="info-row"><i class="fa-solid fa-shield-halved"></i><span>Preferences synced to route search</span></div>
+                    </div>
+                </aside>
+
+                <section class="workspace-right">
+                    <div class="top-stats-row">
+                        <div class="card has-slide-bar">
+                            <div class="card-header">
+                                <h3>Route Mix</h3>
+                                <select aria-label="Route stats range"><option>This Month</option><option>This Week</option></select>
+                            </div>
+                            <div class="chart-layout-box">
+                                <div class="ring-chart"></div>
+                                <div class="legend-list">
+                                    <div class="legend-tag"><span class="colored-dot" style="background:#ff6a00"></span> Fastest <strong>19</strong></div>
+                                    <div class="legend-tag"><span class="colored-dot" style="background:#ff9500"></span> Balanced <strong>13</strong></div>
+                                    <div class="legend-tag"><span class="colored-dot" style="background:#36d636"></span> Eco <strong>10</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card has-slide-bar">
+                            <div class="card-header"><h3>Saved Time</h3><i class="fa-solid fa-gauge-high" style="color:#ff6a00"></i></div>
+                            <div class="stat-value">8h 35m</div>
+                            <p class="meta" style="margin-top:8px;">Estimated time saved from optimized routes.</p>
+                        </div>
+                        <div class="card has-slide-bar">
+                            <div class="card-header"><h3>Favorite Mode</h3><i class="fa-solid fa-car-side" style="color:#ff6a00"></i></div>
+                            <div class="stat-value" id="favoriteModeText">Driving</div>
+                            <p class="meta" style="margin-top:8px;">Used as your default route search mode.</p>
+                        </div>
+                    </div>
+
+                    <section class="card has-slide-bar">
+                        <div id="profileMessage" class="profile-message"></div>
+                        <div class="sub-nav-tabs" role="tablist">
+                            <button class="tab-item active" type="button" data-tab="trips">Trips</button>
+                            <button class="tab-item" type="button" data-tab="locations">Locations</button>
+                            <button class="tab-item" type="button" data-tab="details">Profile</button>
+                            <button class="tab-item" type="button" data-tab="preferences">Preferences</button>
+                        </div>
+
+                        <div id="tripsTab" class="tab-panel active">
+                            <div class="action-belt">
+                                <select aria-label="Trip filter"><option>Upcoming Trips</option><option>Recent Trips</option><option>Saved Routes</option></select>
+                                <button class="btn" type="button" onclick="window.location.href='traffic.html'"><i class="fa-solid fa-plus"></i> New Route</button>
+                            </div>
+                            <div class="list-container">
+                                <div class="record-row has-slide-bar">
+                                    <b style="color:#ff6a00;">Today</b>
+                                    <span class="badge-status assigned">Ready</span>
+                                    <span>8:30 AM</span>
+                                    <span class="route-path">Home <i class="fa-solid fa-arrow-right" style="font-size:11px; margin:0 4px;"></i> Work zone</span>
+                                </div>
+                                <div class="record-row has-slide-bar">
+                                    <b style="color:#ff6a00;">Tomorrow</b>
+                                    <span class="badge-status done">Saved</span>
+                                    <span>6:00 PM</span>
+                                    <span class="route-path">Office <i class="fa-solid fa-arrow-right" style="font-size:11px; margin:0 4px;"></i> Home base</span>
+                                </div>
+                                <div class="record-row has-slide-bar">
+                                    <b style="color:#ff6a00;">Weekend</b>
+                                    <span class="badge-status canceled">Review</span>
+                                    <span>10:15 AM</span>
+                                    <span class="route-path">Current location <i class="fa-solid fa-arrow-right" style="font-size:11px; margin:0 4px;"></i> Favorite destination</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="locationsTab" class="tab-panel">
+                            <form id="localProfileForm" class="form-grid">
+                                <h3><i class="fa-solid fa-location-dot"></i> Quick Locations</h3>
+                                <div class="form-group">
+                                    <label for="homeAddress">Home Base</label>
+                                    <input id="homeAddress" type="text" placeholder="Enter home address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="workAddress">Work Zone</label>
+                                    <input id="workAddress" type="text" placeholder="Enter work or school address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumber">Phone</label>
+                                    <input id="phoneNumber" type="tel" placeholder="Enter phone number">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emergencyContact">Emergency Contact</label>
+                                    <input id="emergencyContact" type="text" placeholder="Name or number">
+                                </div>
+                                <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Locations</button>
+                            </form>
+                        </div>
+
+                        <div id="detailsTab" class="tab-panel">
+                            <form id="profileForm" class="form-grid">
+                                <h3><i class="fa-solid fa-id-card"></i> Basic Details</h3>
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <input id="username" type="text" placeholder="Enter username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="email" placeholder="Enter email" required>
+                                </div>
+                                <button class="btn" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+                            </form>
+                        </div>
+
+                        <div id="preferencesTab" class="tab-panel">
+                            <form id="preferencesForm" class="form-grid">
+                                <h3><i class="fa-solid fa-sliders"></i> Route Preferences</h3>
+                                <div class="form-group">
+                                    <label for="defaultMode">Default Travel Mode</label>
+                                    <select id="defaultMode">
+                                        <option value="driving">Driving</option>
+                                        <option value="walking">Walking</option>
+                                        <option value="bicycling">Bicycling</option>
+                                        <option value="transit">Transit</option>
+                                    </select>
+                                </div>
+                                <label class="check-row"><input id="avoidTolls" type="checkbox"> Avoid toll roads</label>
+                                <label class="check-row"><input id="avoidHighways" type="checkbox"> Avoid highways</label>
+                                <button class="btn" type="submit"><i class="fa-solid fa-check"></i> Save Preferences</button>
+                            </form>
+                        </div>
+                    </section>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/profile.js"></script>
+    <script>
+        const LOCAL_PROFILE_KEY = 'navipulse_profile_extras';
+
+        function titleCase(value) {
+            return String(value || 'driving').charAt(0).toUpperCase() + String(value || 'driving').slice(1);
+        }
+
+        function updateProfileExtras() {
+            const extras = JSON.parse(localStorage.getItem(LOCAL_PROFILE_KEY) || '{}');
+            const mode = document.getElementById('defaultMode')?.value || 'driving';
+            document.getElementById('homeAddressText').textContent = extras.homeAddress || 'Home base not set';
+            document.getElementById('workAddressText').textContent = extras.workAddress || 'Work zone not set';
+            document.getElementById('phoneText').textContent = extras.phoneNumber || 'Phone not set';
+            document.getElementById('memberText').textContent = extras.emergencyContact ? `Emergency: ${extras.emergencyContact}` : 'NaviPulse member';
+            document.getElementById('modeText').textContent = `Default mode: ${titleCase(mode)}`;
+            document.getElementById('favoriteModeText').textContent = titleCase(mode);
+
+            ['homeAddress', 'workAddress', 'phoneNumber', 'emergencyContact'].forEach((id) => {
+                const input = document.getElementById(id);
+                if (input) input.value = extras[id] || '';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.tab-item').forEach((tab) => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-item').forEach((item) => item.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                });
+            });
+
+            document.getElementById('localProfileForm').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const extras = {
+                    homeAddress: document.getElementById('homeAddress').value.trim(),
+                    workAddress: document.getElementById('workAddress').value.trim(),
+                    phoneNumber: document.getElementById('phoneNumber').value.trim(),
+                    emergencyContact: document.getElementById('emergencyContact').value.trim()
+                };
+                localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(extras));
+                updateProfileExtras();
+                setMessage('Locations saved on this device', 'ok');
+            });
+
+            document.getElementById('defaultMode').addEventListener('change', updateProfileExtras);
+            setTimeout(updateProfileExtras, 100);
+        });
+    </script>
+</body>
+</html>

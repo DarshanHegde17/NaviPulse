@@ -1,0 +1,337 @@
+/* Shared explorer UI for My Airport / My Railway pages */
+.service-page-layout {
+    display: grid;
+    grid-template-columns: minmax(340px, 1fr) minmax(320px, 480px);
+    gap: 24px;
+    margin-top: 22px;
+    align-items: start;
+}
+.service-page-left { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.quick-actions {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 16px; background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: 14px;
+}
+.quick-actions .service-btn { font-size: 13px; padding: 10px 14px; }
+.back-link {
+    display: inline-flex; align-items: center; gap: 8px; color: #888;
+    text-decoration: none; font-size: 13px; font-weight: 600; margin-bottom: 8px;
+}
+.back-link:hover { color: #ff6a00; }
+.explorer-panel {
+    background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: 18px;
+    padding: 18px; min-height: 420px;
+}
+.explorer-panel.page-mode .explorer-body {
+    max-height: none; overflow: visible; margin-top: 0;
+    background: transparent; border: 0; padding: 0;
+}
+.explorer-panel h3.panel-title {
+    font-size: 15px; margin-bottom: 14px; color: #ff6a00;
+    display: flex; align-items: center; gap: 8px;
+}
+.explorer-body {
+    max-height: 520px; overflow: auto;
+    background: #080808; border: 1px solid #2a2a2a; border-radius: 14px; padding: 14px;
+}
+.explorer-body::-webkit-scrollbar { width: 6px; }
+.explorer-body::-webkit-scrollbar-thumb { background: #333; border-radius: 6px; }
+.explorer-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 12px; }
+.crumb { background: transparent; border: 0; color: #888; cursor: pointer; font-weight: 600; padding: 0; }
+.crumb:hover, .crumb.active { color: #ff6a00; }
+.explorer-panel.airport-theme .crumb:hover,
+.explorer-panel.airport-theme .crumb.active { color: #00b4d8; }
+.explorer-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.explorer-search {
+    flex: 1; min-width: 140px; background: #141414; border: 1px solid #333; color: #fff;
+    border-radius: 10px; padding: 9px 12px; font-size: 13px; outline: none;
+}
+.explorer-search:focus { border-color: #ff6a00; }
+.explorer-panel.airport-theme .explorer-search:focus { border-color: #00b4d8; }
+.explorer-count { font-size: 11px; color: #888; white-space: nowrap; }
+.crumb-sep { color: #555; font-size: 10px; }
+.state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.state-chip {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    background: #111; border: 1px solid #222; color: #fff; border-radius: 10px;
+    padding: 11px 13px; cursor: pointer; text-align: left; transition: 0.2s;
+}
+.state-chip:hover { border-color: #ff6a00; background: rgba(255, 106, 0, 0.08); }
+.explorer-panel.airport-theme .state-chip:hover { border-color: #00b4d8; background: rgba(0, 180, 216, 0.08); }
+.state-name { font-weight: 700; font-size: 13px; }
+.state-count { font-size: 11px; color: #888; }
+.item-list, .airport-list, .station-list { display: flex; flex-direction: column; gap: 8px; }
+.item-row, .airport-row, .station-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    width: 100%; background: #111; border: 1px solid #222; color: #fff;
+    border-radius: 10px; padding: 12px; cursor: pointer; text-align: left; transition: 0.2s;
+}
+.item-row:hover, .airport-row:hover, .station-row:hover { border-color: #ff6a00; }
+.explorer-panel.airport-theme .item-row:hover,
+.explorer-panel.airport-theme .airport-row:hover { border-color: #00b4d8; }
+.item-row-main, .airport-row-main, .station-row-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.airport-row-thumb {
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 10px; object-fit: cover;
+    border: 1px solid #2a2a2a; background: #111;
+}
+.airport-photo-block { margin-bottom: 14px; }
+.airport-hero-wrap {
+    position: relative; display: block; width: 100%; padding: 0; border: 0;
+    background: transparent; cursor: pointer; border-radius: 12px; overflow: hidden;
+}
+.airport-hero-wrap:hover .airport-detail-hero { transform: scale(1.02); }
+.airport-detail-hero {
+    width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px;
+    border: 1px solid #2a2a2a; display: block; transition: transform 0.25s ease;
+}
+.photo-count-badge {
+    position: absolute; right: 10px; bottom: 10px;
+    background: rgba(0, 0, 0, 0.72); color: #fff; font-size: 11px; font-weight: 700;
+    padding: 6px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
+    backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.explorer-panel.airport-theme .photo-count-badge { background: rgba(0, 100, 130, 0.85); }
+.airport-photo-toolbar { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+.airport-photo-toolbar .view-photos-btn { font-size: 12px !important; padding: 8px 12px !important; }
+.airport-photo-source { font-size: 10px; color: #666; margin-left: auto; }
+.airport-photo-source a { color: #00b4d8; text-decoration: none; }
+.airport-photo-source a:hover { text-decoration: underline; }
+.airport-thumb-strip {
+    display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 2px;
+}
+.airport-hero-thumb {
+    flex-shrink: 0; width: 72px; height: 52px; object-fit: cover; border-radius: 8px;
+    border: 2px solid #2a2a2a; cursor: pointer; opacity: 0.75; transition: 0.2s;
+}
+.airport-hero-thumb:hover, .airport-hero-thumb.active {
+    opacity: 1; border-color: #00b4d8;
+}
+body.airport-gallery-open { overflow: hidden; }
+.airport-gallery-modal {
+    position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+}
+.airport-gallery-modal[hidden] { display: none !important; }
+.airport-gallery-backdrop {
+    position: absolute; inset: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(4px);
+}
+.airport-gallery-dialog {
+    position: relative; z-index: 1; width: min(920px, 100%); max-height: 92vh;
+    background: #0c0c0c; border: 1px solid #333; border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; overflow: hidden;
+}
+.airport-gallery-header {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid #222;
+}
+.airport-gallery-header h4 { font-size: 15px; color: #fff; margin-bottom: 2px; }
+.airport-gallery-counter { font-size: 11px; color: #888; }
+.airport-gallery-close {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid #333;
+    background: #111; color: #fff; cursor: pointer;
+}
+.airport-gallery-close:hover { border-color: #00b4d8; color: #00b4d8; }
+.airport-gallery-main {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    min-height: 280px; background: #050505; padding: 12px 48px;
+}
+.airport-gallery-image {
+    max-width: 100%; max-height: 58vh; object-fit: contain; border-radius: 10px;
+}
+.airport-gallery-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid #333;
+    background: rgba(17, 17, 17, 0.92); color: #fff; cursor: pointer; z-index: 2;
+}
+.airport-gallery-nav.prev { left: 10px; }
+.airport-gallery-nav.next { right: 10px; }
+.airport-gallery-nav:hover { border-color: #00b4d8; color: #00b4d8; }
+.airport-gallery-thumbs {
+    display: flex; gap: 8px; padding: 12px 16px 16px; overflow-x: auto; border-top: 1px solid #222;
+}
+.airport-gallery-thumb {
+    flex-shrink: 0; width: 84px; height: 58px; padding: 0; border-radius: 8px;
+    border: 2px solid #333; background: #111; cursor: pointer; overflow: hidden;
+}
+.airport-gallery-thumb.active { border-color: #00b4d8; }
+.airport-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Railway station photos & gallery (orange theme) */
+.railway-photo-block { margin-bottom: 14px; }
+.railway-hero-wrap {
+    position: relative; display: block; width: 100%; padding: 0; border: 0;
+    background: transparent; cursor: pointer; border-radius: 12px; overflow: hidden;
+}
+.railway-hero-wrap:hover .railway-detail-hero { transform: scale(1.02); }
+.railway-detail-hero {
+    width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px;
+    border: 1px solid #2a2a2a; display: block; transition: transform 0.25s ease;
+}
+.photo-count-badge.railway-badge { background: rgba(255, 106, 0, 0.88); }
+.railway-photo-toolbar { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+.railway-photo-toolbar .view-railway-photos-btn { font-size: 12px !important; padding: 8px 12px !important; }
+.railway-photo-source { font-size: 10px; color: #666; margin-left: auto; }
+.railway-photo-source a { color: #ff6a00; text-decoration: none; }
+.railway-photo-source a:hover { text-decoration: underline; }
+.railway-thumb-strip { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 2px; }
+.railway-hero-thumb {
+    flex-shrink: 0; width: 72px; height: 52px; object-fit: cover; border-radius: 8px;
+    border: 2px solid #2a2a2a; cursor: pointer; opacity: 0.75; transition: 0.2s;
+}
+.railway-hero-thumb:hover, .railway-hero-thumb.active { opacity: 1; border-color: #ff6a00; }
+.station-detail-header.has-photo { display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-bottom: 14px; }
+body.railway-gallery-open { overflow: hidden; }
+.railway-gallery-modal {
+    position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.railway-gallery-modal[hidden] { display: none !important; }
+.railway-gallery-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(4px); }
+.railway-gallery-dialog {
+    position: relative; z-index: 1; width: min(920px, 100%); max-height: 92vh;
+    background: #0c0c0c; border: 1px solid #333; border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; overflow: hidden;
+}
+.railway-gallery-header {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid #222;
+}
+.railway-gallery-header h4 { font-size: 15px; color: #fff; margin-bottom: 2px; }
+.railway-gallery-counter { font-size: 11px; color: #888; }
+.railway-gallery-close {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid #333;
+    background: #111; color: #fff; cursor: pointer;
+}
+.railway-gallery-close:hover { border-color: #ff6a00; color: #ff6a00; }
+.railway-gallery-main {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    min-height: 280px; background: #050505; padding: 12px 48px;
+}
+.railway-gallery-image { max-width: 100%; max-height: 58vh; object-fit: contain; border-radius: 10px; }
+.railway-gallery-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid #333;
+    background: rgba(17, 17, 17, 0.92); color: #fff; cursor: pointer; z-index: 2;
+}
+.railway-gallery-nav.prev { left: 10px; }
+.railway-gallery-nav.next { right: 10px; }
+.railway-gallery-nav:hover { border-color: #ff6a00; color: #ff6a00; }
+.railway-gallery-thumbs {
+    display: flex; gap: 8px; padding: 12px 16px 16px; overflow-x: auto; border-top: 1px solid #222;
+}
+.railway-gallery-thumb {
+    flex-shrink: 0; width: 84px; height: 58px; padding: 0; border-radius: 8px;
+    border: 2px solid #333; background: #111; cursor: pointer; overflow: hidden;
+}
+.railway-gallery-thumb.active { border-color: #ff6a00; }
+.railway-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Live platform board */
+.platform-board {
+    background: #111; border: 1px solid #222; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 14px;
+}
+.platform-board-head {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+    align-items: center; margin-bottom: 10px;
+}
+.platform-board-head h4 { font-size: 13px; color: #ff6a00; }
+.platform-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.platform-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255, 106, 0, 0.12); color: #ff8533; border: 1px solid rgba(255, 106, 0, 0.35);
+    padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+}
+.platform-cell {
+    display: inline-block; min-width: 28px; text-align: center; font-weight: 800;
+    color: #ff8533; background: rgba(255, 106, 0, 0.1); padding: 2px 8px; border-radius: 6px;
+}
+.platform-board-empty { padding: 4px 0; }
+
+.airport-detail-header.has-photo { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+.airport-detail-header.has-photo .airport-detail-top { min-width: 0; }
+.item-code, .airport-iata, .station-code {
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(255, 106, 0, 0.15); color: #ff6a00;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px;
+}
+.explorer-panel.airport-theme .item-code,
+.explorer-panel.airport-theme .airport-iata { background: rgba(0, 180, 216, 0.15); color: #00b4d8; }
+.item-row-main strong, .airport-row-main strong, .station-row-main strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.item-row-main span, .airport-row-main span, .station-row-main span { font-size: 11px; color: #888; }
+.item-row-meta, .airport-row-meta, .station-row-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: #aaa; flex-shrink: 0; }
+.detail-header, .airport-detail-header, .station-detail-header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; }
+.detail-code, .detail-iata, .detail-station-code, .station-detail-header .detail-station-code {
+    display: inline-block; background: rgba(255, 106, 0, 0.15); color: #ff6a00;
+    padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; margin-bottom: 6px;
+}
+.explorer-panel.airport-theme .detail-code,
+.explorer-panel.airport-theme .detail-iata { background: rgba(0, 180, 216, 0.15); color: #00b4d8; }
+.detail-header h3, .airport-detail-header h3, .station-detail-header h3 { font-size: 17px; margin-bottom: 4px; line-height: 1.3; }
+.detail-header p, .airport-detail-header p, .station-detail-header p { font-size: 12px; color: #888; }
+.plan-route-btn { padding: 9px 12px !important; font-size: 12px !important; white-space: nowrap; }
+.stats-grid, .airport-stats-grid, .station-stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.detail-stat, .airport-stat, .station-stat {
+    display: flex; gap: 10px; align-items: flex-start; background: #111;
+    border: 1px solid #222; border-radius: 10px; padding: 10px;
+}
+.detail-stat i, .airport-stat i, .station-stat i { color: #ff6a00; margin-top: 2px; font-size: 14px; }
+.detail-stat .stat-label, .airport-stat .stat-label, .station-stat .stat-label { display: block; font-size: 10px; color: #888; text-transform: uppercase; }
+.detail-stat strong, .airport-stat strong, .station-stat strong { display: block; font-size: 14px; margin-top: 2px; }
+.detail-stat small, .airport-stat small, .station-stat small { font-size: 10px; color: #666; }
+.schedule-section-head, .flights-section-head, .trains-section-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 10px; align-items: center; }
+.schedule-section h4, .flights-section h4, .trains-section h4 { font-size: 13px; color: #ff6a00; }
+.schedule-note, .flights-note, .trains-note { font-size: 10px; color: #666; }
+.schedule-table-wrap, .flights-table-wrap, .trains-table-wrap { overflow-x: auto; border: 1px solid #222; border-radius: 10px; }
+.schedule-table, .flights-table, .trains-table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 600px; }
+.schedule-table th, .schedule-table td,
+.flights-table th, .flights-table td,
+.trains-table th, .trains-table td { padding: 8px 10px; border-bottom: 1px solid #1a1a1a; text-align: left; }
+.schedule-table th, .flights-table th, .trains-table th { color: #888; font-weight: 700; background: #0c0c0c; position: sticky; top: 0; }
+.schedule-table tbody tr:hover, .flights-table tbody tr:hover, .trains-table tbody tr:hover { background: rgba(255, 106, 0, 0.05); }
+.schedule-status, .flight-status, .train-status { font-weight: 700; font-size: 10px; padding: 3px 7px; border-radius: 6px; white-space: nowrap; }
+.schedule-status.ontime, .flight-status.ontime, .train-status.ontime { color: #36d636; background: rgba(54, 214, 54, 0.12); }
+.schedule-status.boarding, .flight-status.boarding, .train-status.boarding { color: #00b4d8; background: rgba(0, 180, 216, 0.12); }
+.schedule-status.delayed, .flight-status.delayed, .train-status.delayed { color: #ff9900; background: rgba(255, 153, 0, 0.12); }
+.map-box {
+    width: 100%; min-height: 480px; position: relative; border-radius: 32px; overflow: hidden;
+    border: 1px solid rgba(255, 106, 0, 0.25);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6), 0 0 100px rgba(255, 106, 0, 0.1);
+    background: radial-gradient(circle at 50% 50%, #06060f 0%, #020205 100%);
+}
+#earth-3d-canvas-container { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; pointer-events: none; }
+.map-box::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+    background-size: 30px 30px; z-index: 2; pointer-events: none;
+}
+.hud-card {
+    position: absolute; background: rgba(10, 10, 15, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1); padding: 16px; border-radius: 16px;
+    backdrop-filter: blur(14px); z-index: 4;
+}
+.live-hud { top: 25px; left: 25px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+.pulse-dot { width: 8px; height: 8px; background: #00f5d4; border-radius: 50%; animation: neonBlink 1.5s infinite alternate; }
+.live-hud span { font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #00f5d4; }
+.metrics-hud { bottom: 25px; right: 25px; width: 240px; }
+.metrics-hud h5 { color: #ff6a00; font-size: 14px; margin-bottom: 6px; }
+.metrics-hud p { font-size: 13px; color: #ccc; margin-top: 2px; }
+@keyframes neonBlink { from { opacity: 0.3; } to { opacity: 1; } }
+.service-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ff6a00; color: #fff; border: none; border-radius: 10px;
+    padding: 11px 16px; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none;
+}
+.service-btn:hover { background: #ff8533; }
+.service-btn.secondary { background: transparent; border: 1px solid #444; color: #ddd; }
+.service-btn.secondary:hover { border-color: #ff6a00; color: #ff6a00; }
+.service-btn.secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+.theme-light .explorer-panel, .theme-light .quick-actions, .theme-light .state-chip,
+.theme-light .item-row, .theme-light .detail-stat {
+    background: #fff !important; border-color: #d1d5db !important; color: #111827 !important;
+}
+.theme-light .explorer-search { background: #fff !important; color: #111827 !important; }
+@media (max-width: 1100px) {
+    .service-page-layout { grid-template-columns: 1fr; }
+    .map-box { min-height: 360px; }
+    .state-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route History - NaviPulse</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #050505; color: white; }
+        .theme-light body { background: #f4f6fb; color: #111827; }
+        .theme-light .sidebar { background: #ffffff; border-right-color: #d1d5db; }
+        .theme-light .tagline { color: #4b5563; }
+        .theme-light .card, .theme-light .history-item, .theme-light .premium {
+            background: #ffffff !important;
+            border-color: #d1d5db !important;
+            color: #111827 !important;
+            box-shadow: none !important;
+        }
+        .theme-light .tab-btn, .theme-light .btn-icon {
+            background: #f9fafb !important;
+            color: #111827 !important;
+            border-color: #d1d5db !important;
+        }
+        .theme-light .menu a { color: #111827; }
+        .theme-light .welcome p, .theme-light .history-meta { color: #4b5563 !important; }
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 260px; background: #080808; border-right: 1px solid #222;
+            padding: 25px 15px;
+        }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .logo span:first-child { color: white; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #ccc; font-size: 14px; margin-bottom: 30px; }
+        .menu a {
+            display: flex; align-items: center; gap: 15px; padding: 15px;
+            margin: 8px 0; color: white; text-decoration: none; border-radius: 12px;
+            transition: 0.3s;
+        }
+        .menu a:hover, .menu .active { background: #ff6a00; }
+        .premium {
+            margin-top: 60px; padding: 20px; border: 1px solid #333;
+            border-radius: 15px; background: #111;
+        }
+        .premium h3 { color: #ff9500; margin-bottom: 10px; }
+        .premium button {
+            width: 100%; padding: 12px; background: #ff6a00; color: white;
+            border: none; border-radius: 10px; margin-top: 15px; cursor: pointer;
+        }
+        .main { flex: 1; padding: 25px; }
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px;
+        }
+        .icons i { margin-left: 20px; font-size: 20px; cursor: pointer; }
+        .welcome h1 { font-size: 28px; }
+        .welcome p { color: #aaa; margin-top: 5px; }
+        .card {
+            background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: 18px;
+            padding: 20px; box-shadow: 0 0 20px rgba(255, 106, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        .card h2 { font-size: 20px; margin-bottom: 16px; }
+        .page-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+        }
+        .btn-clear {
+            padding: 10px 18px; background: transparent; border: 1px solid #ff2b1f;
+            color: #ff2b1f; border-radius: 10px; cursor: pointer; font-size: 14px;
+            transition: 0.2s;
+        }
+        .btn-clear:hover { background: rgba(255, 43, 31, 0.15); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 12px 20px; background: #151515; border: 1px solid #333;
+            color: #ccc; border-radius: 10px; cursor: pointer; font-size: 14px;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #ff6a00; border-color: #ff6a00; color: white;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 16px; padding: 16px 18px; background: #111; border: 1px solid #2a2a2a;
+            border-radius: 12px; transition: 0.2s;
+        }
+        .history-item:hover { border-color: #ff6a00; }
+        .history-info h3 {
+            font-size: 16px; margin-bottom: 8px; display: flex; align-items: center;
+            gap: 8px; flex-wrap: wrap;
+        }
+        .history-info h3 .arrow { color: #ff6a00; font-size: 12px; }
+        .history-meta {
+            display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: #aaa;
+        }
+        .history-meta span i { color: #ff6a00; margin-right: 4px; }
+        .history-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-icon {
+            width: 40px; height: 40px; border-radius: 10px; border: 1px solid #333;
+            background: #171717; color: white; cursor: pointer; transition: 0.2s;
+        }
+        .btn-icon:hover { background: #ff6a00; border-color: #ff6a00; }
+        .empty-state, .error-state, .loading {
+            text-align: center; padding: 48px 20px; color: #888; font-size: 15px;
+        }
+        .error-state { color: #ff2b1f; }
+        .traffic-low { color: #36d636; }
+        .traffic-medium { color: #ff9900; }
+        .traffic-heavy { color: #ff2b1f; }
+        @media (max-width: 1100px) {
+            .sidebar { display: none; }
+            .history-item { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Smart Routes. Smarter Journeys.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="history.html" class="active"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="history.html#saved-routes"><i class="fa-solid fa-bookmark"></i> Saved Routes</a>
+                <a href="traffic.html"><i class="fa-solid fa-car"></i> Traffic Updates</a>
+                <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <div class="premium">
+                <h3><i class="fa-solid fa-crown"></i> Go Premium</h3>
+                <p>Unlock advanced smart route features.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <i class="fa-solid fa-bars"></i>
+                <div class="icons">
+                    <i class="fa-solid fa-moon"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <a href="profile.html" style="color:inherit"><i class="fa-solid fa-user-circle"></i></a>
+                </div>
+            </div>
+
+            <div class="welcome">
+                <h1 id="welcomeUser">Route History</h1>
+                <p>Your past searches and saved routes</p>
+            </div>
+
+            <div class="card">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-clock-rotate-left"></i> History</h2>
+                    <button class="btn-clear" onclick="clearHistory()" id="clearHistoryBtn">
+                        <i class="fa-solid fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="search-history" onclick="showTab('search-history', this)">
+                        <i class="fa-solid fa-search"></i> Search History
+                    </button>
+                    <button class="tab-btn" data-tab="saved-routes" onclick="showTab('saved-routes', this)">
+                        <i class="fa-solid fa-star"></i> Saved Routes
+                    </button>
+                </div>
+
+                <div id="search-history" class="tab-content active">
+                    <div id="historyList" class="history-list">
+                        <div class="loading">Loading history...</div>
+                    </div>
+                </div>
+
+                <div id="saved-routes" class="tab-content">
+                    <div id="savedList" class="history-list">
+                        <div class="loading">Loading saved routes...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/history.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user && user.username) {
+                document.getElementById('welcomeUser').textContent = `Hi, ${user.username}`;
+            }
+        });
+    </script>
+</body>
+</html>

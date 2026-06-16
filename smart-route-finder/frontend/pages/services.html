@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Services - NaviPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/service-explorer.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', Arial, sans-serif; }
+        body { background: #050505; color: white; }
+        .theme-light body { background: #f4f6fb; color: #111827; }
+        .theme-light .sidebar { background: #ffffff; border-right-color: #d1d5db; }
+        .theme-light .tagline, .theme-light .welcome p { color: #4b5563 !important; }
+        .theme-light .menu a { color: #111827; }
+        .theme-light .service-hub-card, .theme-light .premium {
+            background: #ffffff !important; border-color: #d1d5db !important; color: #111827 !important; box-shadow: none !important;
+        }
+        .theme-light .service-hub-card p { color: #4b5563 !important; }
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #080808; border-right: 1px solid #222; padding: 25px 15px; flex-shrink: 0; }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .logo span:first-child { color: white; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #ccc; font-size: 14px; margin-bottom: 30px; }
+        .menu a { display: flex; align-items: center; gap: 15px; padding: 15px; margin: 8px 0; color: white; text-decoration: none; border-radius: 12px; transition: 0.3s; }
+        .menu a:hover, .menu .active { background: #ff6a00; }
+        .premium { margin-top: 60px; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #111; }
+        .premium h3 { color: #ff9500; margin-bottom: 10px; }
+        .premium button { width: 100%; padding: 12px; background: #ff6a00; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+        .main { flex: 1; padding: 25px; min-width: 0; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .icons i { margin-left: 20px; font-size: 20px; cursor: pointer; }
+        .welcome h1 { font-size: 28px; }
+        .welcome p { color: #aaa; margin-top: 5px; }
+        .hub-layout {
+            display: grid; grid-template-columns: minmax(300px, 420px) 1fr;
+            gap: 24px; margin-top: 22px; align-items: start;
+        }
+        .hub-cards { display: flex; flex-direction: column; gap: 20px; }
+        .service-hub-card {
+            display: block; text-decoration: none; color: inherit;
+            background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: 18px;
+            padding: 28px 24px; position: relative; overflow: hidden;
+            transition: border-color 0.3s, transform 0.25s; cursor: pointer;
+        }
+        .service-hub-card::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 3px;
+            background: #ff6a00; transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .service-hub-card:hover { border-color: #ff6a00; transform: translateY(-3px); }
+        .service-hub-card:hover::before { left: 0; }
+        .service-hub-card.airport:hover { border-color: #00b4d8; }
+        .service-hub-card.airport::before { background: #00b4d8; }
+        .hub-header { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+        .hub-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        .service-hub-card.airport .hub-icon { background: rgba(0, 180, 216, 0.15); color: #00b4d8; }
+        .service-hub-card.railway .hub-icon { background: rgba(255, 106, 0, 0.15); color: #ff6a00; }
+        .service-hub-card h2 { font-size: 22px; font-weight: 700; }
+        .hub-status { font-size: 12px; font-weight: 600; color: #36d636; margin-top: 4px; }
+        .service-hub-card p { color: #aaa; font-size: 14px; line-height: 1.55; margin-bottom: 16px; }
+        .hub-features { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .hub-features span {
+            font-size: 11px; padding: 6px 10px; border-radius: 8px;
+            background: #141414; border: 1px solid #2a2a2a; color: #ccc;
+        }
+        .hub-open {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 14px; font-weight: 700; color: #ff6a00;
+        }
+        .service-hub-card.airport .hub-open { color: #00b4d8; }
+        @media (max-width: 1100px) {
+            .sidebar { display: none; }
+            .hub-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Smart Routes. Smarter Journeys.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="history.html#saved-routes"><i class="fa-solid fa-bookmark"></i> Saved Routes</a>
+                <a href="traffic.html"><i class="fa-solid fa-car"></i> Traffic Updates</a>
+                <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html" class="active"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <div class="premium">
+                <h3><i class="fa-solid fa-crown"></i> Go Premium</h3>
+                <p>Unlock advanced smart route features.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <i class="fa-solid fa-bars"></i>
+                <div class="icons">
+                    <i class="fa-solid fa-moon"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <a href="profile.html" style="color:inherit"><i class="fa-solid fa-user-circle"></i></a>
+                </div>
+            </div>
+
+            <div class="welcome">
+                <h1 id="welcomeUser">My Services</h1>
+                <p>Choose a service — each opens its own page with full features.</p>
+            </div>
+
+            <div class="hub-layout">
+                <div class="hub-cards">
+                    <a href="airport.html" class="service-hub-card airport">
+                        <div class="hub-header">
+                            <div class="hub-icon"><i class="fa-solid fa-plane-departure"></i></div>
+                            <div>
+                                <h2>My Airport</h2>
+                                <div class="hub-status"><i class="fa-solid fa-circle" style="font-size:8px"></i> Live departures</div>
+                            </div>
+                        </div>
+                        <p>All Indian airports by state — area, crew, daily flights, routes, times, and traffic-aware routing.</p>
+                        <div class="hub-features">
+                            <span><i class="fa-solid fa-map"></i> States → Airports</span>
+                            <span><i class="fa-solid fa-plane"></i> Flight schedules</span>
+                            <span><i class="fa-solid fa-route"></i> Plan route</span>
+                        </div>
+                        <span class="hub-open">Open My Airport <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+
+                    <a href="railway.html" class="service-hub-card railway">
+                        <div class="hub-header">
+                            <div class="hub-icon"><i class="fa-solid fa-train"></i></div>
+                            <div>
+                                <h2>My Railway</h2>
+                                <div class="hub-status"><i class="fa-solid fa-circle" style="font-size:8px"></i> Station routes ready</div>
+                            </div>
+                        </div>
+                        <p>8,990+ railway stations across India — search by name or code, live train boards, and door-to-station navigation.</p>
+                        <div class="hub-features">
+                            <span><i class="fa-solid fa-map"></i> States → Stations</span>
+                            <span><i class="fa-solid fa-train"></i> Train schedules</span>
+                            <span><i class="fa-solid fa-route"></i> Plan route</span>
+                        </div>
+                        <span class="hub-open">Open My Railway <i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                </div>
+
+                <div class="map-box" id="mapBoxContainer">
+                    <div id="earth-3d-canvas-container"></div>
+                    <div class="hud-card live-hud">
+                        <div class="pulse-dot"></div>
+                        <span>3D GEOSPATIAL VECTOR CORE</span>
+                    </div>
+                    <div class="hud-card metrics-hud">
+                        <h5><i class="fa-solid fa-compass"></i> Global Services</h5>
+                        <p>• <strong>Airport:</strong> Door-to-terminal routing</p>
+                        <p style="color: #ef233c; padding-left: 10px;">Traffic-aware ETA updates</p>
+                        <p>• <span style="color: #00b4d8;">Railway:</span> Station & transit links</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/earth-globe.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user?.username) {
+                document.getElementById('welcomeUser').textContent = `My Services, ${user.username}`;
+            }
+            initEarthGlobe('mapBoxContainer', 'earth-3d-canvas-container');
+        });
+    </script>
+</body>
+</html>

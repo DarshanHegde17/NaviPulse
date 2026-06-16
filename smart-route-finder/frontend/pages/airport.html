@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Airport - NaviPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/service-explorer.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', Arial, sans-serif; }
+        body { background: #050505; color: white; }
+        .theme-light body { background: #f4f6fb; color: #111827; }
+        .theme-light .sidebar { background: #fff; border-right-color: #d1d5db; }
+        .theme-light .tagline, .theme-light .welcome p { color: #4b5563 !important; }
+        .theme-light .menu a { color: #111827; }
+        .theme-light .premium { background: #fff !important; border-color: #d1d5db !important; }
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #080808; border-right: 1px solid #222; padding: 25px 15px; flex-shrink: 0; }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .logo span:first-child { color: white; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #ccc; font-size: 14px; margin-bottom: 30px; }
+        .menu a { display: flex; align-items: center; gap: 15px; padding: 15px; margin: 8px 0; color: white; text-decoration: none; border-radius: 12px; transition: 0.3s; }
+        .menu a:hover, .menu .active { background: #ff6a00; }
+        .premium { margin-top: 60px; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #111; }
+        .premium h3 { color: #ff9500; margin-bottom: 10px; }
+        .premium button { width: 100%; padding: 12px; background: #ff6a00; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+        .main { flex: 1; padding: 25px; min-width: 0; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .icons i { margin-left: 20px; font-size: 20px; cursor: pointer; }
+        .welcome h1 { font-size: 28px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .welcome h1 i { color: #00b4d8; }
+        .welcome p { color: #aaa; margin-top: 5px; }
+        @media (max-width: 1100px) { .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Smart Routes. Smarter Journeys.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="history.html#saved-routes"><i class="fa-solid fa-bookmark"></i> Saved Routes</a>
+                <a href="traffic.html"><i class="fa-solid fa-car"></i> Traffic Updates</a>
+                <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html" class="active"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <div class="premium">
+                <h3><i class="fa-solid fa-crown"></i> Go Premium</h3>
+                <p>Unlock advanced smart route features.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <i class="fa-solid fa-bars"></i>
+                <div class="icons">
+                    <i class="fa-solid fa-moon"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <a href="profile.html" style="color:inherit"><i class="fa-solid fa-user-circle"></i></a>
+                </div>
+            </div>
+
+            <a href="services.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to My Services</a>
+
+            <div class="welcome">
+                <h1><i class="fa-solid fa-plane-departure"></i> <span id="welcomeUser">My Airport</span></h1>
+                <p>Browse airports by state, view area, crew, flights, routes, and plan traffic-aware trips.</p>
+            </div>
+
+            <div class="service-page-layout">
+                <div class="service-page-left">
+                    <div class="quick-actions">
+                        <a class="service-btn" href="dashboard.html?service=airport"><i class="fa-solid fa-route"></i> Plan airport route</a>
+                        <button type="button" class="service-btn secondary" onclick="prefillNearest('airport')"><i class="fa-solid fa-plane"></i> Nearest airport</button>
+                    </div>
+
+                    <div id="airportExplorer" class="explorer-panel airport-theme page-mode">
+                        <h3 class="panel-title"><i class="fa-solid fa-map-location-dot"></i> All airports by state</h3>
+                        <div class="explorer-body"></div>
+                    </div>
+                </div>
+
+                <div class="map-box" id="mapBoxContainer">
+                    <div id="earth-3d-canvas-container"></div>
+                    <div class="hud-card live-hud">
+                        <div class="pulse-dot"></div>
+                        <span>3D GEOSPATIAL VECTOR CORE</span>
+                    </div>
+                    <div class="hud-card metrics-hud">
+                        <h5><i class="fa-solid fa-plane"></i> Airport Services</h5>
+                        <p>• State-wise airport directory</p>
+                        <p>• Area, crew & flight stats</p>
+                        <p>• Source → destination schedules</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/earth-globe.js"></script>
+    <script src="../js/airport-data.js"></script>
+    <script src="../js/airport-images.js"></script>
+    <script src="../js/airport-explorer.js"></script>
+    <script>
+        const NEAREST = {
+            airport: 'Kempegowda International Airport, Bengaluru',
+            railway: 'KSR Bengaluru City Railway Station',
+        };
+
+        function prefillNearest(type) {
+            sessionStorage.setItem('navipulse_service_dest', NEAREST[type]);
+            sessionStorage.setItem('navipulse_service_type', type);
+            window.location.href = 'dashboard.html?service=' + type;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUser();
+            if (user?.username) {
+                document.getElementById('welcomeUser').textContent = `My Airport — ${user.username}`;
+            }
+            initEarthGlobe('mapBoxContainer', 'earth-3d-canvas-container');
+            AirportExplorer.init('airportExplorer', { pageMode: true });
+        });
+    </script>
+</body>
+</html>

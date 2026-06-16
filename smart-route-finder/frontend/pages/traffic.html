@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Updates - NaviPulse</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #050505; color: white; }
+        .theme-light body { background: #f4f6fb; color: #111827; }
+        .theme-light .sidebar { background: #ffffff; border-right-color: #d1d5db; }
+        .theme-light .tagline { color: #4b5563; }
+        .theme-light .card, .theme-light .premium {
+            background: #ffffff !important;
+            border-color: #d1d5db !important;
+            color: #111827 !important;
+            box-shadow: none !important;
+        }
+        .theme-light .city-chip { background: #f9fafb !important; border-color: #d1d5db !important; color: #111827 !important; }
+        .theme-light .menu a { color: #111827; }
+        .theme-light .welcome p, .theme-light #trafficNote { color: #4b5563 !important; }
+        .dashboard { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #080808; border-right: 1px solid #222; padding: 25px 15px; }
+        .logo { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .logo span:first-child { color: white; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #ccc; font-size: 14px; margin-bottom: 30px; }
+        .menu a { display: flex; align-items: center; gap: 15px; padding: 15px; margin: 8px 0; color: white; text-decoration: none; border-radius: 12px; transition: 0.3s; }
+        .menu a:hover, .menu .active { background: #ff6a00; }
+        .premium { margin-top: 60px; padding: 20px; border: 1px solid #333; border-radius: 15px; background: #111; }
+        .premium h3 { color: #ff9500; margin-bottom: 10px; }
+        .premium button { width: 100%; padding: 12px; background: #ff6a00; color: white; border: none; border-radius: 10px; margin-top: 15px; cursor: pointer; }
+        .main { flex: 1; padding: 25px; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .icons i { margin-left: 20px; font-size: 20px; cursor: pointer; }
+        .welcome h1 { font-size: 28px; }
+        .welcome p { color: #aaa; margin-top: 5px; }
+        .card { background: #0c0c0c; border: 1px solid #2a2a2a; border-radius: 18px; padding: 20px; box-shadow: 0 0 20px rgba(255,106,0,0.08); margin-top: 20px; }
+        .search-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .search-row input {
+            flex: 1;
+            border: 1px solid #333;
+            background: #141414;
+            color: #fff;
+            border-radius: 10px;
+            padding: 11px 12px;
+        }
+        .search-row button {
+            border: none;
+            background: #ff6a00;
+            color: #fff;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .theme-light .search-row input { background: #f9fafb !important; border-color: #d1d5db !important; color: #111827 !important; }
+        .city-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+        .city-chip { border: 1px solid #333; background: #141414; color: #ddd; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; }
+        .city-chip.active { background: #ff6a00; border-color: #ff6a00; color: #fff; }
+        #trafficCityMap { height: 460px; border-radius: 14px; border: 1px solid #2a2a2a; }
+        .traffic-legend { margin-top: 14px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: #aaa; }
+        .traffic-legend-bar { flex: 1; height: 10px; border-radius: 999px;
+            background: linear-gradient(90deg, #36d636, #ff9900, #ff2b1f); }
+        .traffic-legend-labels { display: flex; justify-content: space-between; width: 100%; font-size: 11px; margin-top: 2px; color: #888; }
+        .city-summary { margin-bottom: 14px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .city-summary h2 { font-size: 20px; color: #ff6a00; }
+        .traffic-level { font-weight: 700; padding: 6px 10px; border-radius: 8px; font-size: 12px; }
+        .traffic-level.low { color: #36d636; border: 1px solid rgba(54,214,54,0.5); background: rgba(54,214,54,0.08); }
+        .traffic-level.medium { color: #ff9900; border: 1px solid rgba(255,153,0,0.5); background: rgba(255,153,0,0.08); }
+        .traffic-level.heavy { color: #ff2b1f; border: 1px solid rgba(255,43,31,0.5); background: rgba(255,43,31,0.08); }
+        #trafficNote { color: #aaa; font-size: 13px; margin-bottom: 12px; }
+        .api-note { font-size: 12px; margin: 12px 0 0; }
+        .api-note.warn { color: #ff9900; }
+        .api-note.ok { color: #36d636; }
+        .layer-toggles { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+        .layer-toggles span.label { font-size: 12px; color: #888; margin-right: 4px; }
+        .layer-btn {
+            border: 1px solid #333; background: #141414; color: #ccc;
+            padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 12px;
+        }
+        .layer-btn.active { background: #ff6a00; border-color: #ff6a00; color: #fff; }
+        .theme-light .layer-btn { background: #f9fafb !important; border-color: #d1d5db !important; color: #111827 !important; }
+        .theme-light .layer-btn.active { background: #ff6a00 !important; color: #fff !important; }
+        .heat-stats {
+            display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px;
+            padding: 10px 14px; border-radius: 10px; border: 1px solid #2a2a2a; background: #111;
+            font-size: 13px;
+        }
+        .theme-light .heat-stats { background: #f9fafb !important; border-color: #d1d5db !important; }
+        .heat-stats strong { color: #ff6a00; font-size: 18px; margin-right: 4px; }
+        .heat-stats .stat-label { color: #888; font-size: 11px; display: block; }
+        #poiZoomHint { font-size: 12px; color: #888; margin-bottom: 10px; }
+        .theme-light #poiZoomHint { color: #6b7280 !important; }
+        .poi-legend {
+            display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px;
+            font-size: 12px; color: #aaa;
+        }
+        .poi-legend span { display: inline-flex; align-items: center; gap: 6px; }
+        .poi-legend i.dot {
+            width: 22px; height: 22px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; color: #fff;
+        }
+        .poi-marker-wrap { background: transparent; border: none; }
+        .poi-marker {
+            display: flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.85);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+            color: #fff; font-size: 11px;
+        }
+        .poi-name-tooltip {
+            background: rgba(20, 20, 20, 0.92) !important;
+            border: 1px solid #555 !important;
+            color: #fff !important;
+            font-size: 11px !important;
+            font-weight: 600;
+            padding: 4px 8px !important;
+            border-radius: 6px !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        .leaflet-tooltip-left.poi-name-tooltip::before,
+        .leaflet-tooltip-right.poi-name-tooltip::before { border: none; }
+        .places-toggle.active { background: #ff6a00; border-color: #ff6a00; color: #fff; }
+        @media (max-width: 1100px) { .sidebar { display: none; } #trafficCityMap { height: 380px; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Smart Routes. Smarter Journeys.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="history.html#saved-routes"><i class="fa-solid fa-bookmark"></i> Saved Routes</a>
+                <a href="traffic.html" class="active"><i class="fa-solid fa-car"></i> Traffic Updates</a>
+                <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <div class="premium">
+                <h3><i class="fa-solid fa-crown"></i> Go Premium</h3>
+                <p>Unlock advanced smart route features.</p>
+                <button>Upgrade Now</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="topbar">
+                <i class="fa-solid fa-bars"></i>
+                <div class="icons">
+                    <i class="fa-solid fa-moon"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <a href="profile.html" style="color:inherit"><i class="fa-solid fa-user-circle"></i></a>
+                </div>
+            </div>
+            <div class="welcome">
+                <h1 id="welcomeUser">Traffic Updates</h1>
+                <p>Live traffic colors, road names, and nearby hotels, schools & shops — zoom in like Google Maps</p>
+            </div>
+
+            <section class="card">
+                <div class="search-row">
+                    <input id="trafficSearch" type="text" placeholder="Search area (e.g., Hegde Nagar, JP Nagar, Whitefield)">
+                    <button id="searchTrafficBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
+                <div class="city-list">
+                    <button class="city-chip active" data-city="bengaluru">Bengaluru</button>
+                    <button class="city-chip" data-city="mysuru">Mysuru</button>
+                    <button class="city-chip" data-city="hyderabad">Hyderabad</button>
+                    <button class="city-chip" data-city="delhi">Delhi</button>
+                    <button class="city-chip" data-city="mumbai">Mumbai</button>
+                    <button class="city-chip" data-city="chennai">Chennai</button>
+                    <button class="city-chip" data-city="kolkata">Kolkata</button>
+                    <button class="city-chip" data-city="ahmedabad">Ahmedabad</button>
+                    <button class="city-chip" data-city="pune">Pune</button>
+                </div>
+
+                <div class="city-summary">
+                    <h2 id="selectedCityName">Bengaluru</h2>
+                    <span id="trafficLevel" class="traffic-level">--</span>
+                </div>
+                <p id="trafficNote">Loading city traffic status...</p>
+                <div class="layer-toggles">
+                    <span class="label"><i class="fa-solid fa-earth-asia"></i> Base</span>
+                    <button type="button" class="layer-btn basemap-btn active" data-basemap="satellite">Satellite</button>
+                    <button type="button" class="layer-btn basemap-btn" data-basemap="streets">Map</button>
+                    <span class="label" style="margin-left:8px"><i class="fa-solid fa-layer-group"></i> Traffic</span>
+                    <button type="button" class="layer-btn active" data-layer="both">Flow + heat</button>
+                    <button type="button" class="layer-btn" data-layer="flow">Road flow only</button>
+                    <button type="button" class="layer-btn" data-layer="heat">Incident heat only</button>
+                    <span class="label" style="margin-left:8px"><i class="fa-solid fa-map-pin"></i> Places</span>
+                    <button type="button" class="layer-btn places-toggle active" data-places="on">Show</button>
+                    <button type="button" class="layer-btn places-toggle" data-places="off">Hide</button>
+                </div>
+                <p id="poiZoomHint">Zoom in to see road names and nearby hotels, schools, and shops.</p>
+                <div class="heat-stats" id="heatStats">
+                    <div><strong id="heatHotspots">—</strong><span class="stat-label">Hotspots</span></div>
+                    <div><strong id="heatPeakDelay">—</strong><span class="stat-label">Peak congestion</span></div>
+                    <div><strong id="heatAvgDelay">—</strong><span class="stat-label">Avg delay level</span></div>
+                </div>
+                <div id="trafficCityMap"></div>
+                <div class="traffic-legend">
+                    <span><i class="fa-solid fa-wave-square"></i> Flow heat</span>
+                    <div style="flex:1;">
+                        <div class="traffic-legend-bar"></div>
+                        <div class="traffic-legend-labels">
+                            <span>Low</span><span>Medium</span><span>Heavy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="poi-legend">
+                    <span><i class="fa-solid fa-satellite"></i> Satellite = real aerial view · zoom in for detail</span>
+                    <span><i class="dot fa-solid fa-hotel" style="background:#ec4899"></i> Hotel</span>
+                    <span><i class="dot fa-solid fa-hospital" style="background:#ef4444"></i> Hospital</span>
+                    <span><i class="dot fa-solid fa-school" style="background:#3b82f6"></i> School</span>
+                    <span><i class="dot fa-solid fa-store" style="background:#a855f7"></i> Shop</span>
+                </div>
+                <p id="trafficApiNote" class="api-note"></p>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" crossorigin=""></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/map-places.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/traffic.js"></script>
+</body>
+</html>
