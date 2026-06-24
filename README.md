@@ -1,3 +1,2 @@
 # NaviPulse
-
-hh
+readme coming soon
