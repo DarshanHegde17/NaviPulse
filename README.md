@@ -10,7 +10,6 @@ Smart Route Finder is a web-based application that provides:
 - AI-powered route optimization using Dijkstra and A* algorithms
 - Interactive map visualization
 - Route history and favorites management
-
 ## 🚀 Features
 ### Core Features
 1. **Multi-Route Search**
