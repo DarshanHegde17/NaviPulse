@@ -1,6 +1,5 @@
 # Smart Route Finder with Live Traffic
 
-
 An advanced navigation system that helps users find the most efficient routes between locations using real-time traffic data, Google Maps API, and intelligent algorithms (Dijkstra & A*).
 
 ## 🎯 Project Overview
