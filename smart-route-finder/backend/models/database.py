@@ -25,10 +25,10 @@ class Database:
             self._db = self._client[Config.DATABASE_NAME]
             # Test connection
             self._client.server_info()
-            print(f"✓ Connected to MongoDB: {Config.DATABASE_NAME}")
+            print(f"[OK] Connected to MongoDB: {Config.DATABASE_NAME}")
             self._create_indexes()
         except Exception as e:
-            print(f"✗ MongoDB connection failed: {str(e)}")
+            print(f"[ERROR] MongoDB connection failed: {str(e)}")
             raise
     
     def _create_indexes(self):
@@ -45,7 +45,7 @@ class Database:
             # Saved routes indexes
             self._db.saved_routes.create_index([("user_id", 1)])
             
-            print("✓ Database indexes created")
+            print("[OK] Database indexes created")
         except Exception as e:
             print(f"Warning: Index creation failed: {str(e)}")
     
@@ -57,7 +57,7 @@ class Database:
         """Close database connection"""
         if self._client:
             self._client.close()
-            print("✓ MongoDB connection closed")
+            print("[OK] MongoDB connection closed")
 
 # Global database instance
 db = Database()

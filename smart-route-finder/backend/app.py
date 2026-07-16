@@ -76,7 +76,7 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     print(f"\n{'='*50}")
-    print(f"🚀 Smart Route Finder API Server")
+    print(f"[*] Smart Route Finder API Server")
     print(f"{'='*50}")
     print(f"Environment: {Config.FLASK_ENV}")
     print(f"Port: {Config.PORT}")

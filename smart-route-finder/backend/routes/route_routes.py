@@ -663,9 +663,11 @@ def _fetch_indian_rail_station(code, hours):
     if not key:
         return None, None
 
+    code = (code or '').strip().upper()
+    api_code = 'CSMT' if code == 'CSTM' else code
     url = (
         f'http://indianrailapi.com/api/v2/LiveStation/apikey/{key}'
-        f'/StationCode/{code}/hours/{hours}/'
+        f'/StationCode/{api_code}/hours/{hours}/'
     )
     try:
         response = requests.get(url, timeout=15)
@@ -695,7 +697,9 @@ def _fetch_irctc_connect_station(code):
     if not key:
         return None, None
 
-    path = f'/api/liveAtStation/{code}'
+    code = (code or '').strip().upper()
+    api_code = 'CSMT' if code == 'CSTM' else code
+    path = f'/api/liveAtStation/{api_code}'
     headers = _irctc_connect_headers('GET', path, key)
     try:
         response = requests.get(f'{IRCTC_CONNECT_BASE}{path}', headers=headers, timeout=15)
@@ -721,6 +725,8 @@ def _fetch_irctc_connect_station(code):
 
 
 def _fetch_ntes_station(code, hours):
+    code = (code or '').strip().upper()
+    api_code = 'CSMT' if code == 'CSTM' else code
     try:
         from ntes import NTESClient
     except ImportError:
@@ -728,7 +734,7 @@ def _fetch_ntes_station(code, hours):
 
     try:
         client = NTESClient()
-        data = client.station_live(code, hours=int(hours))
+        data = client.station_live(api_code, hours=int(hours))
         items = data.get('TrainsAtStation') or data.get('trains') or []
         trains = [_parse_ntes_train(item) for item in items]
         return {
@@ -1388,7 +1394,11 @@ DEFAULT_TRAIN_HUBS = [
 
 
 def _station_coords(code):
-    station = get_station_by_code(code)
+    code = (code or '').strip().upper()
+    db_code = 'CSTM' if code == 'CSMT' else code
+    station = get_station_by_code(db_code)
+    if not station:
+        station = get_station_by_code(code)
     if not station:
         return None, None, None
     lat, lng = station.get('lat'), station.get('lng')
