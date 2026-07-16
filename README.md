@@ -1,11 +1,8 @@
 # Smart Route Finder with Live Traffic
 
-**MCA Final Year Project - 2026**
-
 An advanced navigation system that helps users find the most efficient routes between locations using real-time traffic data, Google Maps API, and intelligent algorithms (Dijkstra & A*).
 
 ## 🎯 Project Overview
-
 Smart Route Finder is a web-based application that provides:
 - Multiple route alternatives between source and destination
 - Real-time traffic information and delay predictions
@@ -14,7 +11,6 @@ Smart Route Finder is a web-based application that provides:
 - Route history and favorites management
 
 ## 🚀 Features
-
 ### Core Features
 1. **Multi-Route Search**
    - Find multiple routes between any two locations
