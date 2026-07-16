@@ -25,6 +25,17 @@ class Config:
     # Aviationstack — live airport flights (https://aviationstack.com)
     AVIATIONSTACK_API_KEY = os.getenv('AVIATIONSTACK_API_KEY', '')
 
+    # SkyLink ADS-B via RapidAPI (optional)
+    RAPIDAPI_KEY = os.getenv('RAPIDAPI_KEY', '')
+    RAPIDAPI_HOST = os.getenv('RAPIDAPI_HOST', 'skylink-api.p.rapidapi.com')
+
+    # OpenSky Network OAuth2 — free live aircraft positions (preferred)
+    OPENSKY_CLIENT_ID = os.getenv('OPENSKY_CLIENT_ID', '')
+    OPENSKY_CLIENT_SECRET = os.getenv('OPENSKY_CLIENT_SECRET', '')
+    # Legacy basic auth (deprecated by OpenSky)
+    OPENSKY_USERNAME = os.getenv('OPENSKY_USERNAME', '')
+    OPENSKY_PASSWORD = os.getenv('OPENSKY_PASSWORD', '')
+
     # Indian Rail API — live station trains (https://indianrailapi.com)
     INDIAN_RAIL_API_KEY = os.getenv('INDIAN_RAIL_API_KEY', '')
 
@@ -41,7 +52,14 @@ class Config:
     DEFAULT_TRAVEL_MODE = 'DRIVE'
     
     # CORS Settings
-    CORS_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:5500']
+    CORS_ORIGINS = [
+        'http://localhost:3000',
+        'http://127.0.0.1:5500',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://localhost:5500',
+        'http://127.0.0.1:3000',
+    ]
     
     @staticmethod
     def validate_config():

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Train Tracking - NaviPulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', Arial, sans-serif; }
+        html, body { height: 100%; overflow: hidden; background: #020205; color: #fff; }
+        .track-app { display: flex; height: 100vh; width: 100vw; }
+        .sidebar {
+            width: 240px; flex-shrink: 0; background: #080808;
+            border-right: 1px solid #222; padding: 22px 14px;
+            display: flex; flex-direction: column; z-index: 20;
+        }
+        .logo { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+        .logo span:first-child { color: #fff; }
+        .logo span:last-child { color: #ff6a00; }
+        .tagline { color: #888; font-size: 12px; margin-bottom: 24px; }
+        .menu a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px; margin: 4px 0; color: #ddd;
+            text-decoration: none; border-radius: 10px; font-size: 13px; transition: 0.25s;
+        }
+        .menu a:hover, .menu .active { background: #ff6a00; color: #fff; }
+        .menu { flex: 1; }
+        .stage { flex: 1; position: relative; min-width: 0; }
+        #trainMap { position: absolute; inset: 0; background: #0a0e14; }
+        .top-chrome {
+            position: absolute; top: 14px; left: 14px; right: 14px;
+            z-index: 1000; display: flex; gap: 10px; align-items: stretch;
+            pointer-events: none;
+        }
+        .top-chrome > * { pointer-events: auto; }
+        .search-box {
+            flex: 1; max-width: 380px;
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(12, 12, 12, 0.92); border: 1px solid #333;
+            border-radius: 12px; padding: 0 14px; backdrop-filter: blur(10px);
+        }
+        .search-box i { color: #ff6a00; }
+        .search-box input {
+            flex: 1; border: none; background: transparent; color: #fff;
+            padding: 12px 0; font-size: 13px; outline: none;
+        }
+        .search-box input::placeholder { color: #666; }
+        .search-box button {
+            border: none; background: #ff6a00; color: #fff;
+            border-radius: 8px; padding: 7px 12px; font-size: 12px;
+            font-weight: 600; cursor: pointer;
+        }
+        .live-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(12, 12, 12, 0.92); border: 1px solid #333;
+            border-radius: 12px; padding: 0 16px; font-size: 12px; font-weight: 600;
+            backdrop-filter: blur(10px); white-space: nowrap;
+        }
+        .pulse-dot {
+            width: 8px; height: 8px; border-radius: 50%; background: #36d636;
+            box-shadow: 0 0 0 0 rgba(54, 214, 54, 0.6);
+            animation: pulse 1.6s infinite;
+        }
+        .pulse-dot.warn { background: #ff9900; }
+        .pulse-dot.err { background: #ff2b1f; animation: none; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(54, 214, 54, 0.55); }
+            70% { box-shadow: 0 0 0 8px rgba(54, 214, 54, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(54, 214, 54, 0); }
+        }
+        .region-bar {
+            position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+            max-width: 94%;
+        }
+        .region-btn {
+            border: 1px solid #333; background: rgba(12, 12, 12, 0.92); color: #ccc;
+            padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 12px;
+            font-weight: 500; backdrop-filter: blur(10px); transition: 0.2s;
+        }
+        .region-btn:hover { border-color: #ff6a00; color: #fff; }
+        .region-btn.active { background: #ff6a00; border-color: #ff6a00; color: #fff; }
+        .stats-bar {
+            position: absolute; bottom: 18px; left: 14px; z-index: 1000;
+            background: rgba(12, 12, 12, 0.92); border: 1px solid #333;
+            border-radius: 12px; padding: 10px 14px; backdrop-filter: blur(10px);
+            font-size: 12px; display: flex; gap: 16px;
+        }
+        .stats-bar strong { color: #ff6a00; font-size: 16px; display: block; }
+        .stats-bar span { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .detail-panel {
+            position: absolute; top: 70px; right: 14px; width: 330px; max-height: calc(100% - 120px);
+            z-index: 1000; background: rgba(10, 10, 12, 0.96); border: 1px solid #2a2a2a;
+            border-radius: 16px; overflow: hidden; backdrop-filter: blur(14px);
+            transform: translateX(110%); opacity: 0; transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .detail-panel.open { transform: translateX(0); opacity: 1; }
+        .detail-head {
+            padding: 16px 18px; border-bottom: 1px solid #222;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+        }
+        .detail-head h2 { font-size: 20px; font-weight: 700; }
+        .detail-head .airline { color: #888; font-size: 12px; margin-top: 2px; }
+        .detail-close {
+            background: #1a1a1a; border: 1px solid #333; color: #aaa;
+            width: 32px; height: 32px; border-radius: 8px; cursor: pointer; flex-shrink: 0;
+        }
+        .detail-close:hover { background: #ff6a00; color: #fff; border-color: #ff6a00; }
+        .detail-body { padding: 16px 18px; overflow-y: auto; flex: 1; }
+        .detail-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding: 10px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; gap: 10px;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-row .label { color: #777; flex-shrink: 0; }
+        .detail-row .value { font-weight: 600; text-align: right; }
+        .status-pill {
+            display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+        }
+        .status-pill.air { background: rgba(54, 214, 54, 0.12); color: #36d636; border: 1px solid rgba(54, 214, 54, 0.35); }
+        .status-pill.gnd { background: rgba(255, 153, 0, 0.12); color: #ff9900; border: 1px solid rgba(255, 153, 0, 0.35); }
+        .train-icon {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: #ff6a00; color: #fff; border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5); font-size: 12px;
+        }
+        .train-icon.selected { background: #00b4d8; box-shadow: 0 0 0 3px rgba(0,180,216,0.45); }
+        .leaflet-tooltip.train-tip {
+            background: rgba(12, 12, 12, 0.92) !important; border: 1px solid #444 !important;
+            color: #fff !important; font-size: 11px !important; font-weight: 600;
+            padding: 3px 8px !important; border-radius: 6px !important; box-shadow: none !important;
+        }
+        .leaflet-tooltip.train-tip::before { border: none !important; }
+        .map-toast {
+            position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
+            z-index: 1100; background: rgba(20, 12, 0, 0.95); border: 1px solid #ff6a00;
+            color: #ffb347; padding: 10px 18px; border-radius: 10px; font-size: 12px;
+            display: none; max-width: 90%; text-align: center;
+        }
+        .map-toast.show { display: block; }
+        .map-note {
+            position: absolute; top: 70px; left: 14px; z-index: 1000;
+            background: rgba(12,12,12,0.9); border: 1px solid #333; border-radius: 10px;
+            padding: 8px 12px; font-size: 11px; color: #aaa; max-width: 280px;
+        }
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .detail-panel { width: calc(100% - 28px); right: 14px; left: 14px; max-height: 45%; top: auto; bottom: 70px; }
+            .stats-bar, .map-note { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="track-app">
+        <aside class="sidebar">
+            <div class="logo"><span>Navi</span><span>Pulse</span></div>
+            <p class="tagline">Live rails. Real trains.</p>
+            <div class="menu">
+                <a href="dashboard.html"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+                <a href="traffic.html"><i class="fa-solid fa-globe"></i> Traffic Explorer</a>
+                <a href="live-tracking.html"><i class="fa-solid fa-plane"></i> Live Tracking</a>
+                <a href="train-tracking.html" class="active"><i class="fa-solid fa-train"></i> Train Tracking</a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i> Route History</a>
+                <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+                <a href="services.html"><i class="fa-solid fa-briefcase"></i> My Services</a>
+                <a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <div class="stage">
+            <div id="trainMap"></div>
+
+            <div class="top-chrome">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="trainSearch" placeholder="Train number (e.g. 12301)" autocomplete="off">
+                    <button type="button" id="trainSearchBtn">Track</button>
+                </div>
+                <div class="live-badge" id="liveBadge">
+                    <span class="pulse-dot" id="liveDot"></span>
+                    <span id="liveLabel">Connecting…</span>
+                </div>
+            </div>
+
+            <div class="map-note">Station-based live positions (NTES) — not continuous GPS</div>
+            <div class="map-toast" id="mapToast"></div>
+
+            <aside class="detail-panel" id="detailPanel">
+                <div class="detail-head">
+                    <div>
+                        <h2 id="detailTrainNo">—</h2>
+                        <div class="airline" id="detailTrainName">—</div>
+                    </div>
+                    <button type="button" class="detail-close" id="detailClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="detail-body" id="detailBody"></div>
+            </aside>
+
+            <div class="stats-bar">
+                <div><strong id="statCount">0</strong><span>Trains</span></div>
+                <div><strong id="statHubs">0</strong><span>Hubs</span></div>
+                <div><strong id="statUpdated">—</strong><span>Updated</span></div>
+            </div>
+
+            <div class="region-bar" id="regionBar">
+                <button type="button" class="region-btn active" data-region="india">India hubs</button>
+                <button type="button" class="region-btn" data-region="north">North</button>
+                <button type="button" class="region-btn" data-region="west">West</button>
+                <button type="button" class="region-btn" data-region="south">South</button>
+                <button type="button" class="region-btn" data-region="east">East</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/train-tracking.js"></script>
+</body>
+</html>

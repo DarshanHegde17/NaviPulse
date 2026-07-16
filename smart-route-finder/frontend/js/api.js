@@ -100,6 +100,27 @@ class API {
         return this.request(`${API_CONFIG.ENDPOINTS.ROUTES.AIRPORT_FLIGHTS}?${qs}`);
     }
 
+    static async getLiveFlights({ lamin, lomin, lamax, lomax } = {}) {
+        const qs = new URLSearchParams();
+        if (lamin != null) qs.set('lamin', String(lamin));
+        if (lomin != null) qs.set('lomin', String(lomin));
+        if (lamax != null) qs.set('lamax', String(lamax));
+        if (lomax != null) qs.set('lomax', String(lomax));
+        return this.request(`${API_CONFIG.ENDPOINTS.ROUTES.FLIGHTS_LIVE}?${qs}`);
+    }
+
+    static async getLiveTrains(hubs = '') {
+        const qs = new URLSearchParams();
+        if (hubs) qs.set('hubs', hubs);
+        return this.request(`${API_CONFIG.ENDPOINTS.ROUTES.TRAINS_LIVE}?${qs}`);
+    }
+
+    static async trackTrain(number, date = '') {
+        const qs = new URLSearchParams({ number: String(number) });
+        if (date) qs.set('date', date);
+        return this.request(`${API_CONFIG.ENDPOINTS.ROUTES.TRAINS_TRACK}?${qs}`);
+    }
+
     static async getAirportPhotos(iata, name = '', city = '') {
         const qs = new URLSearchParams({ iata, name, city });
         return this.request(`${API_CONFIG.ENDPOINTS.ROUTES.AIRPORT_PHOTOS}?${qs}`);
