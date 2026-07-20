@@ -3,7 +3,6 @@
 An advanced navigation system that helps users find the most efficient routes between locations using real-time traffic data, Google Maps API, and intelligent algorithms (Dijkstra & A*).
 
 
-
 ## 🎯 Project Overview
 Smart Route Finder is a web-based application that provides:
 - Multiple route alternatives between source and destination
