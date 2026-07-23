@@ -10,6 +10,7 @@ Smart Route Finder is a web-based application that provides:
 - Interactive map visualization
 - Route history and favorites management
 
+
 ## 🚀 Features
 
 ### Core Features
